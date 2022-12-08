@@ -20,8 +20,15 @@ jobs:
         username: standardcore
         # Password or personal access token used to log against the Docker registry
         password: ${{ secrets.DOCKER_HUB_SECRETS }}
+    - name: Setup ENV
+        # https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
+      run: |
+          echo "RELEASE_TAG=${GITHUB_REF:10}" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$GITHUB_WORKFLOW" >> $GITHUB_ENV
+    - name: Display Env
+      run: env
     - name: docker build
-      run: docker build ./ -t standardcore/crossover-novnc:$(date +%s)
+      run: docker build ./ -t standardcore/crossover-novnc:${{ env.RELEASE_TAG }}
     - name: docker push
-      run: docker push standardcore/crossover-novnc:$(date +%s)
+      run: docker push standardcore/crossover-novnc:${{ env.RELEASE_TAG }}
     
